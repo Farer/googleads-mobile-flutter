@@ -27,7 +27,7 @@ void main() {
 
   group('GoogleMobileAds', () {
     final List<MethodCall> log = <MethodCall>[];
-    final MessageCodec codec = AdMessageCodec();
+    final MessageCodec<dynamic> codec = AdMessageCodec();
 
     setUp(() async {
       log.clear();
@@ -58,7 +58,7 @@ void main() {
         maxAdContentRating: MaxAdContentRating.ma,
         tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
         tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.yes,
-        testDeviceIds: ["test-device-id"],
+        testDeviceIds: <String>['test-device-id'],
       );
       await instanceManager.updateRequestConfiguration(requestConfiguration);
       expect(log, <Matcher>[
@@ -67,7 +67,7 @@ void main() {
               'maxAdContentRating': MaxAdContentRating.ma,
               'tagForChildDirectedTreatment': TagForChildDirectedTreatment.yes,
               'tagForUnderAgeOfConsent': TagForUnderAgeOfConsent.yes,
-              'testDeviceIds': ['test-device-id'],
+              'testDeviceIds': <String>['test-device-id'],
             })
       ]);
     });
@@ -181,43 +181,46 @@ void main() {
     });
 
     testWidgets('build ad widget', (WidgetTester tester) async {
+      final NativeAd native = NativeAd(
+        adUnitId: NativeAd.testAdUnitId,
+        factoryId: '0',
+        listener: AdListener(),
+        request: AdRequest(),
+      );
+
+      await native.load();
+
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
-            final NativeAd native = NativeAd(
-              adUnitId: NativeAd.testAdUnitId,
-              factoryId: '0',
-              listener: AdListener(),
-              request: AdRequest(),
-            );
-
             AdWidget widget = AdWidget(ad: native);
-            var buildWidget = widget.createElement().build();
+            Widget buildWidget = widget.createElement().build();
             expect(buildWidget, isA<PlatformViewLink>());
             return widget;
           },
         ),
       );
+      await native.dispose();
     });
 
     testWidgets('build ad widget', (WidgetTester tester) async {
+      final NativeAd native = NativeAd(
+        adUnitId: NativeAd.testAdUnitId,
+        factoryId: '0',
+        listener: AdListener(),
+        request: AdRequest(),
+      );
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
-            final NativeAd native = NativeAd(
-              adUnitId: NativeAd.testAdUnitId,
-              factoryId: '0',
-              listener: AdListener(),
-              request: AdRequest(),
-            );
-
             AdWidget widget = AdWidget(ad: native);
-            var buildWidget = widget.createElement().build();
+            Widget buildWidget = widget.createElement().build();
             expect(buildWidget, isA<PlatformViewLink>());
             return widget;
           },
         ),
       );
+      await native.dispose();
     });
 
     testWidgets('warns when ad object is reused', (WidgetTester tester) async {
@@ -704,9 +707,9 @@ void main() {
 
     test('encode/decode AdRequest', () async {
       final AdRequest adRequest = AdRequest(
-          keywords: ['1', '2', '3'],
+          keywords: <String>['1', '2', '3'],
           contentUrl: 'contentUrl',
-          testDevices: ['Android', 'iOS'],
+          testDevices: <String>['Android', 'iOS'],
           nonPersonalizedAds: false);
 
       final ByteData byteData = codec.encodeMessage(adRequest);
