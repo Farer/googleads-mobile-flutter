@@ -221,10 +221,10 @@
       "name": "google_mobile_ads_example",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "2.0"
+      "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-03-26T14:19:06.543447Z",
+  "generated": "2021-03-27T00:40:14.906922Z",
   "generator": "pub",
   "generatorVersion": "2.12.2"
 }
